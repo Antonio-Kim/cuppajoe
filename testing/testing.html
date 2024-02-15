@@ -15,7 +15,67 @@
     </nav>
   </header>
   <main>
-    
+    <section id="basics">
+      <p>
+        The unit testing in Java is done with JUnit framework, hence both Maven and Gradle uses JUnit when it comes to testing. 
+        However, there are other frameworks out there such as Spock or TestNG. When using either Maven or Gradle, two sections are
+        created under src directory, which are /main and /test. Majority of your application code will go under main, but the testing
+        codes will be under the /test directory. 
+      </p>
+
+      <p>
+        So let's implement some simple unit tests. For now, we're going to work on unit testing and parameterized testing to get it going.
+        As mentioned before, you'll write your code on src/main and write tests on src/test if you have setup your project using Maven or 
+        Gradle. We'll add something simple to our main code:
+        <pre>
+          <code>
+            public class Operations {
+              public static void add(int a, int b) {
+                return a + b;
+              }
+            }
+          </code>
+        </pre>
+        Easy enough to understand. Now to test this, we would first check the correct input, then incorrect input(s), null, and etc, but for
+        now we'll simply write one test that passes.
+        <pre>
+          <code>
+            @Test
+            @DisplayName("Checking correct addition")
+            public void testCorrectAddition() {
+              int a = 1;
+              int b = 2;
+
+              Assertions.assertEqual(Operations.add(a,b), 3);
+            }
+          </code>
+        </pre>
+        We're simply adding two numbers and checking if the output is correct. The codes will obviously more complicated, but this is not about 
+        writing code. It's about writing unit tests. Now to run this test, open up the tab for Maven/Gradle in Intellij and go to 
+        Tasks -> verification -> and click on test. This should run the whole tests you've setup under the test section.
+      </p>
+      <p>
+        Let's now try parameterized test. We're continuing on with the add function we've written above, but we'll include parameters instead. 
+        <pre>
+          <code>
+            @ParameterizedTest
+            @CsvSource({
+              "1, 2, 3",
+              "4, 5, 9",
+            })
+            public void testMultipleAddition(int a, int b, int result) {
+              Assertions.assertTrue(Operations.add(a,b) == result);
+            }
+          </code>
+        </pre>
+        Instead of assertEqual, we used assertTrue instead. Same as before, run the test from Maven/Gradle and you should expect the corrrect result. 
+      </p>
+      
+      <p>
+        <strong>Mocking</strong> is where you "mock" other dependencies such as database or other servers so that you test specifically the function
+        or the class you are testing. Basically you create a dummy dependencies and getting it to behave similar to the real one.
+      </p>
+    </section>
   </main>
 </body>
 </html>
