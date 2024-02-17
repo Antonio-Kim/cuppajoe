@@ -76,6 +76,57 @@
         or the class you are testing. Basically you create a dummy dependencies and getting it to behave similar to the real one.
       </p>
     </section>
+    <section id="junit5">
+      <h1>Core Concepts</h1>
+      Here are main concepts of JUnit core:
+      <ul>
+        <li> A test class in JUnit 5 needs the following characteristics to run:</li>
+          <ul>
+            <li> It may be a top-level class, static member class, or inner class annotated as @Nested</li>
+            <li> Must have single constructor, with no arguments, or arguments that can be dynamically resolved at runtime through </li>
+            dependency injection
+          </ul>
+        <li> Test methods are annotated with: @Test, @Repeated-Test, @ParameterizedTest, @TestFactory, or @TestTemplate</li>
+        <li> Lifecycle methods are annotated with: @BeforeAll, @AfterAll, @BeforeEach, @AfterEach</li>
+        <li> TestInfo is a class whose objects are used to inject information about the currently executed test or container into @Test and all the lifecycle methods.
+          TestInfo is added to constructor of the test clas (Reflection most likely).</li>
+      </ul>
+
+      <h2>Common Annotations in JUnit</h2>
+      <ul>
+        <li> @DisplayName: can be used over classes and methods. As name implies, whenever the test is ran, string inside the annotation is displayed.
+          If a method is not displayed using @DisplayName, method name will be used instead. </li>
+        <li> @Disabled: tells JUnit test method should not be executed. </li>
+        <li> @Nested: usually tested on tightly coupled classes, such as inner and outer class. </li>
+        <li> @RepeatedTest: repeats specified number of test to run. Annotation takes value and name as parameters. It can also use the following variables: </li>
+          <ul>
+            <li> displayName: current method name </li>
+            <li> currentRepetition: how many times it has ran so far </li>
+            <li> totalRepetition: specified in value parameter </li>
+          </ul>
+        <li> @ParameterizedTest: run multiple times with different arguments. Must declare at least one source providing the arguments for each invocation </li>
+          <ul>
+            <li> @ValueSource: single array of literal values. Each execution runs each elements of the array. </li>
+            <li> @EnumSource </li>
+            <li> @CsvSource: similar to ValuSource but with multiple inputs, separated by comma </li>
+            <li> @CsvFileSource: instead of writing them on anntoation, it uses a csv file to run them. The file is replaced under /main/test/resources </li>
+          </ul>
+      </ul>
+
+      <h2>Dynamic tests</h2>
+      Dynamic test allows tests to be generated at runtime. To do so, we create a Factory method, and at runtime, it creates series of test to be run. Factory 
+      method is created using @TestFactory. Remember that Factory method is NOT a test, but method that generate tests. It must one of the following:
+      <ul>
+        <li>DynamicNode</li>
+        <li>Array of DynamicNode</li>
+        <li>Stream of DynamicNode</li>
+        <li>Collection of DynamicNode</li>
+        <li>Iterable of DynamicNode</li>
+        <li>ITerator of DynamicNode</li>
+      </ul>
+      <h3>Side notes</h3>
+      <li> The assertAll method can be used in lambda function. This would allow chaining of multiple tests together.
+    </section>
   </main>
 </body>
 </html>
