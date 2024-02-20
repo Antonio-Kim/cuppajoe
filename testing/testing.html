@@ -76,6 +76,20 @@
         or the class you are testing. Basically you create a dummy dependencies and getting it to behave similar to the real one.
       </p>
     </section>
+
+    <section id="testtypes">
+      <p>Generally speaking there are four types of testing in software</p>
+      <ul>
+        <li>Unit testing: Unit tests focuse on "unit" of source code, and they are usually methods of class or classes in isolation.</li>
+        <li>Integration testing: examining the interaction among components is the main focuse of integration testing. Integration testing can be done 
+          in different aspects of software. For example, interaction between objects, services and subsystems (backend and frontend, presentation and
+          data services) are where integration testing are useful. Ideally, integration tests should be create before writing application codes.
+        </li>
+        <li>System testing: system testing is done on a completed integrated system to check whether it meets the requirements.</li>
+        <li>Acceptance testing</li>
+      </ul>
+    </section>
+
     <section id="junit5">
       <h1>Core Concepts</h1>
       Here are main concepts of JUnit core:
@@ -122,10 +136,111 @@
         <li>Stream of DynamicNode</li>
         <li>Collection of DynamicNode</li>
         <li>Iterable of DynamicNode</li>
-        <li>ITerator of DynamicNode</li>
+        <li>Iterator of DynamicNode</li>
+      </ul>
+
+      <h2>JUnit Architecture</h2>
+      <p>JUnit 5 made significant changes to how JUnit is built and run. In JUnit 5, the architecture consists of following modules:</p>
+      <ul>
+        <li>Platform: foundation for lanuching testing framework on JVM.</li>
+        <li>Jupiter: combines new programming and extension model for writing tests and extensions</li>
+        <li>Vintange: test engine for running JUnit 3 and JUnit 4</li>
+      </ul>
+      <p>Here are some important APIs within Platform and Jupiter</p>
+      <h4>JUnit Platform</h4>
+      <ul>
+        <li>junit-platform-commons: internal libraries used only for JUnit.</li>
+        <li>junit-platform-console: support for discovering and executing JUnit on console</li>
+        <li>junit-platform-console-standalone: executable jar with all dependencies include to run JUnit platform on console</li>
+        <li>junit-platform-engine: public API for test engines</li>
+        <li>junit-platform-launcher: public API for configuring and launching test plans. Typically used by IDEs and build tools</li>
+        <li>junit-platform-runner: runner executing tests and test suites on JUnit plaform in JUnit 4 environment</li>
+        <li>junit-platform-suite-api: annotations for configuring test suites on JUnit Platform</li>
+      </ul>
+      <h4>JUnit Jupiter</h4>
+      <ul>
+        <li>junit-jupiter-api: writing tests and extensions</li>
+        <li>junit-jupiter-engine: test engine implementations which are used in runtime</li>
+        <li>junit-jupiter-params: support for parameterized tests</li>
+        <li>junit-jupiter-migrationsupport: only for running selected JUnit 4 rules</li>
       </ul>
       <h3>Side notes</h3>
       <li> The assertAll method can be used in lambda function. This would allow chaining of multiple tests together.
+    </section>
+
+    <section id="test_quality">
+      <h2>Measuring test coverage</h2>
+      <p>Here's an important note: high code coverage does not tell you anything about quality of the tests. However, high test coverage means more 
+        codes were executed during the test, which would suggest lower chance of bugs compared to low test coverage.
+      </p>
+    </section>
+
+    <section id="stubs">
+      <p>When your program requires external system such as HTTP server or database, it would be difficult to test on your local development unless
+        you have access to them in real environment. But most of the time this is not feasible. Say your program uses HTTP to connect to another 
+        company's server. You wouldn't have full access to their data, and thus you'll need to simulate their server so that you can test your code.
+        Another example would be, say you're working with other developers, and you are working on one part that requires another part from other 
+        developers. How would you test your program if other developer's program is not ready? This is where you have to <strong>fake</strong> their
+        server, database, or even programs. There's two approach to fake the external system: stubbing and mocking objects.
+      </p>
+      <h3>Introduction to stubs</h3>
+      <p>
+        Stubs is way to faking behaviours of real system when they're not ready or not available for use. When using stubs, you do not have to change
+        the code that you're testing. Rather, it will adapt to your code instead. Here's when you should use stubs:
+        <ul>
+          <li>You cannot modify existing system because it's too complicated</li>
+          <li>You're using an environment you cannot control</li>
+          <li>You're trying to test using external systems such as servers or database</li>
+          <li>You're performing coarse set of tests, such as integration testing between subsystems</li>
+        </ul>
+        You should not use stubs if you're in this situation:
+        <ul>
+          <li>You need tests that tells you exactly where the error occurred and which line of code is causing it</li>
+          <li>You want to test small part of your code in isolation</li>
+        </ul>
+        The above example is good when using mocks instead. Stubs provide good level of confidence of your system when it passes. But the downside of this 
+        is that stubs are complicated to write, hard to maintain, and you need different types of stubs for different types of testing.
+      </p>
+      <h3>Using stubs for HTTP testing</h3>
+      <p>One way to test HTTP connection in Java is to create a small apache test server and test your code through there. However, it has several drawbacks.
+        The easiest way is to run Jetty from Eclipse foundation which will mock an embedded server. (see www.eclipse.org/jetty for more info).
+        In the pom.xml / build.gradle file, you will need to add jetty, which is something like this in pom.xml:
+        <code>
+          <pre>
+            <dependency>
+              <groupId>org.mortbay.jetty</groupId>
+              <artifactId>jetty</artifactId>
+              <version>7.0.0.pre5</version>
+            </dependency>
+          </pre>
+        </code>
+        Once Jetty is included, you will need to setup Jetty inside @BeforeAll. Starting a server is simple, but you will also need to add routes and content
+        inside the Jetty server to test. First we will need to setup a function to add content into a route:
+        <code>
+          <pre>
+            private static class TestGetContent extends AbstractHandler {
+              @Override
+              public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException {
+                OutputStream out = response.getOutputStream();
+                ByteArrayIOS8859Writer writer = new ByteArrayIOS8859Writer();
+                writer.write("It works");
+                writer.flush();
+                response.setIntHeader(HttpHeaders.CONTENT_LENGTH, writer.size());
+                writer.writeTo(out);
+                out.flush();
+              }
+            }
+          </pre>
+        </code>  
+      </p>
+    </section>
+
+    <section id="mocks">
+      <h2>Mock Objects</h2>
+      <p>
+        Mocks replace objects that your methods are collaborating with, which is somewhat similar to stubs, but unlike stubs, mocks do not implement any logics.
+        The major difference between stubs and mocks is that stubs have predetermined behaviours when running the test, but mocks do not.
+      </p>
     </section>
   </main>
 </body>
