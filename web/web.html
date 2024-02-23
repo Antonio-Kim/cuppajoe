@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <header>
+    <title>Web Development</title>
+    <meta charset="UTF-8">
+  </header>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="../index.html">Home Page</a></li>
+          <li><a href="../java/java-lang.html">Java Language</a></li>
+          <li><a href="../testing/testing.html">Testing</a></li>
+        </ul>
+      </nav>
+    </header>
+    <h1>Web Development</h1>
+    <p>This page consists of web development, specifically using Java as the language</p>
+
+    <h2>Using plain Java</h2>
+
+    <h2>Spring</h2>
+    <p>
+      Understanding Dependency Injection (DI) and Inversion of Control (IoC) is key to understanding the usefulness of 
+      Spring framework. When a class needs another object from a different class, you can either inherit the class, or 
+      the another way is to call the object/class when is required. This is dependency injection, and you can either 
+      create a method to call the class or inject it inside the constructor. However, this creates tight coupling since
+      you cannot create a class without it. Instead, what can be done is have another entity do it for you while the class
+      (Plain ol Java Object) does not have to deal with another object. This is what Inversion of Control is - having 
+      another entity deal with lifecycle and construction of other objects. 
+
+      In spring framework, the entity responsible for IoC is called "Application Context".
+
+      When we talk about beans, it is referring to Spring containers managed by Application Context. The way that Application
+      Context create containers by your POJO class inserted with Configuration data from application-context.xml. 
+
+      @Autowired annotation on top of a fied will automatically look for a container in Application Context and inject the
+      the bean to the object. This is much better than declaring it like this:
+      <code>
+        <pre>
+          private static final String APPLICATION_CONTEXT_XML_FILE_NAME = "classpath:application-context.xml";
+          private ClassPathXmlApplicationContext context;
+
+          context = new ClassPathXmlApplicationContext(APPLICATION_CONTEXT_XML_FILE_NAME);
+        </pre>
+      </code>
+      After the code above you will need to use context.getBean() to call the bean from Application context. Just using @Autowired
+      is much easier to do so. However, note that there should be only one bean with the same name or else it will throw an error.
+
+      In the recent Spring, beans are created using annotation above the class declaration. One of the ways that Application Context
+      will scan for beans is using @Service.
+    </p>
+
+
+    <h2>Spring Boot</h2>
+  </body>
+</html>
